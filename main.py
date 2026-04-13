@@ -49,15 +49,22 @@ def get_latest():
 state_file="last.json"
 
 def load_last():
-    if os.path.exists(state_file):
-        return json.load(open(state_file))
+    try:
+        if os.path.exists(state_file):
+            with open(state_file, "r") as f:
+                return json.load(f)
+    except:
+        return {}
     return {}
 
 def save_last(data):
     json.dump(data, open(state_file,"w"))
 
 last=load_last()
-post=get_latest()
+post = get_latest()
+if not post:
+    print("Không có dữ liệu")
+    exit()
 
 if post and post["id"]!=last.get("id"):
     vi=translate(post["text"])
