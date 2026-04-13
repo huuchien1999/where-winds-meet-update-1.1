@@ -113,6 +113,10 @@ def save_last(data):
 # 🚀 MAIN
 def main():
     last = load_last()
+    
+    # TEST WEBHOOK
+    requests.post(WEBHOOK, json={"content": "TEST BOT OK"}, timeout=10)
+
     post = get_latest()
 
     if not post:
