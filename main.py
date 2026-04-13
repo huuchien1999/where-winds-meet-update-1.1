@@ -119,7 +119,6 @@ def main():
     last = load_last()
 
     # TEST WEBHOOK
-    requests.post(WEBHOOK, json={"content": "TEST BOT OK"}, timeout=10)
 
     post = get_latest()
 
@@ -139,7 +138,7 @@ def main():
         return
 
     # Force gửi để test
-    if True:
+    if post_id != last.get("id"):
         print("✅ Gửi Discord")
         vi_text = translate(text)
         send_embed(text, vi_text, url, image)
