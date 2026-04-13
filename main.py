@@ -42,22 +42,27 @@ def send_embed(text, vi_text, url, image=None):
         print("❌ Thiếu WEBHOOK")
         return
 
+    desc = f"🇨🇳 {text[:1000]}\n\n🇻🇳 {vi_text[:1000]}"
+
     data = {
+        "content": "📢 Có bài mới!",
         "embeds": [
             {
-                "title": "📢 Weibo mới",
-                "description": f"🇨🇳 {text[:1000]}\n\n🇻🇳 {vi_text[:1000]}",
+                "title": "Weibo mới",
+                "description": desc,
                 "url": url,
                 "color": 16711680
             }
         ]
     }
 
-    if image:
+    if image and isinstance(image, str) and image.startswith("http"):
         data["embeds"][0]["image"] = {"url": image}
 
     try:
-        requests.post(WEBHOOK, json=data, timeout=10)
+        res = requests.post(WEBHOOK, json=data, timeout=10)
+        print("Discord status:", res.status_code)
+        print("Response:", res.text)
     except Exception as e:
         print("Lỗi gửi Discord:", e)
 
@@ -67,7 +72,6 @@ def get_latest():
         url = f"https://m.weibo.cn/api/container/getIndex?type=uid&value={UID}&containerid=107603{UID}"
 
         res = requests.get(url, headers=HEADERS, timeout=10)
-
         print("Status:", res.status_code)
 
         if res.status_code != 200:
@@ -113,7 +117,7 @@ def save_last(data):
 # 🚀 MAIN
 def main():
     last = load_last()
-    
+
     # TEST WEBHOOK
     requests.post(WEBHOOK, json={"content": "TEST BOT OK"}, timeout=10)
 
@@ -122,6 +126,8 @@ def main():
     if not post:
         print("⚠️ Không lấy được dữ liệu Weibo")
         return
+
+    print("POST:", post)
 
     post_id = post.get("id")
     text = post.get("text", "")
@@ -132,8 +138,9 @@ def main():
         print("⚠️ Post không hợp lệ")
         return
 
+    # Force gửi để test
     if True:
-        print("✅ Có bài mới → gửi Discord")
+        print("✅ Gửi Discord")
         vi_text = translate(text)
         send_embed(text, vi_text, url, image)
         save_last(post)
