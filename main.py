@@ -128,7 +128,7 @@ def main():
         print("⚠️ Post không hợp lệ")
         return
 
-    if post_id != last.get("id"):
+    if True:
         print("✅ Có bài mới → gửi Discord")
         vi_text = translate(text)
         send_embed(text, vi_text, url, image)
